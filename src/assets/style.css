@@ -2,10 +2,11 @@
 
 html,
 body {
+	height: 100%;
 	background-color: #fff;
 	margin: 0;
 	padding: 0;
-	height: 100%;
+	width: 100%;
 	font-family: 'Courier New', monospace;
 }
 
@@ -13,14 +14,24 @@ div {
 	box-sizing: border-box;
 }
 
+.drag-sort-active {
+	color: #20B4E6;
+	border: 1px solid #20B4E6;
+	background-image: url("./images/handle_highlight.png") !important;
+}
+
+.drag-sort-active .checkbox {
+	border: 1px solid #20B4E6 !important;
+}
+
 #mainPanel {
-	height: 100%;
 	max-width: 500px;
 	width: 95%;
-	border: 2px solid #5fa777;
-	border-bottom: none;
 	margin: 0 auto;
-	box-shadow: 0px 0px 15px 0px #777
+	box-shadow: 0px 0px 15px 0px #777;
+	display: flex;
+	flex-flow: column;
+	height: 100%;
 }
 
 .title {
@@ -39,24 +50,27 @@ div {
 	display: flex;
 	background: aliceblue;
 	width: 100%;
-	height: calc(100% - 75px);
+	flex-grow: 1;
+	flex-flow: row;
 	box-shadow: 0px 2px 3px 0px #777 inset;
 	position: relative;
 }
 
-#left_col {
+#buttons_col {
 	display: flex;
 	flex-flow: column;
 	width: 25%;
-	height: 100%;
 }
 
-#right_col {
-	width: 100%;
+#list_col {
 	display: flex;
 	flex-flow: column;
 	align-items: end;
 	overflow-x: hidden;
+	flex-grow: 1;
+	border-top: 2px solid #20B4E6;
+	border-left: 2px solid #20B4E6;
+	border-bottom: 2px solid #20B4E6;
 }
 
 .icon {
@@ -75,24 +89,21 @@ div {
 	flex-grow: 1;
 	flex-flow: column;
 	display: flex;
-	/* border-top-right-radius: 15px; */
-	/* border-top: 2px solid #5fa777; */
+	border-bottom: 2px solid #5fa777;
 	border-right: 2px solid #5fa777;
+	border-left: 2px solid #5fa777;
 	background: #4a875f;
-	box-shadow: 0px 3px 7px 0px #333 inset;
+	box-shadow: 3px 0px 10px 2px #333 inset;
 	width: 100%;
 }
 
 #newItem {
-	height: 80px;
-	width: 80px;
+	width: 80%;
+	margin: 10px auto;
+	aspect-ratio: 1 / 1;
 	background-color: #20b4e6;
 	border-radius: 10px;
 	box-shadow: 0px 2px 7px 0px #333;
-	position: absolute;
-	z-index: 3;
-	bottom: 25px;
-	right: 25px;
 }
 
 #newItem::after {
@@ -113,7 +124,7 @@ div {
 	content: "+"
 }
 
-#finishedTasks,
+#tasks,
 #downloadApp,
 #info {
 	width: 80%;
@@ -127,15 +138,31 @@ div {
 	align-items: center;
 }
 
+#tasks {
+	background-image: url("./images/unfinished.png");
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.finishedTasks {
+	background-image: url("./images/finished.png") !important;
+}
+
 #info {
 	align-items: center !important;
 	justify-content: end !important;
 }
 
-#listDone {
-	border: 1px solid #20B4E6;
-	z-index: 4;
-	box-shadow: 0 0 5px 1px;
+#deleteListItems {
+	border-radius: 10px;
+	cursor: pointer;
+	padding: 3px;
+	background: #fff;
+	color: #20B4E6;
+}
+
+.hidden {
+	display: none;
 }
 
 #listDone .toDoItem {
@@ -143,13 +170,9 @@ div {
 }
 
 .listPanel {
-	width: 90%;
+	width: 100%;
 	flex-grow: 1;
 	overflow-y: scroll;
-	margin-top: 5px;
-	margin-right: 5px;
-	background: aliceblue;
-
 }
 
 #buttonSpacer {
@@ -157,18 +180,16 @@ div {
 	width: 100%;
 }
 
-
-
 .toDoContainer {
-	padding: 10px 20px 10px 10px;
+	padding: 10px 10px 10px 35px;
 	display: flex;
 	margin: 10px auto;
-	width: 230px;
+	width: 240px;
 	align-items: center;
 	background-color: #fff;
 	background-image: url("./images/handle.png");
 	background-repeat: no-repeat;
-	background-position-x: 205px;
+	background-position-x: 15px;
 	background-position-y: center;
 	border-radius: 5px;
 }
@@ -183,7 +204,7 @@ div {
 
 .checkbox {
 	width: 25px;
-	aspect-ratio: 1 / 1;
+	height: 25px;
 	border-radius: 50%;
 	vertical-align: middle;
 	border: 1px solid #777;
@@ -197,7 +218,6 @@ div {
 	-webkit-appearance: auto;
 	appearance: auto;
 	clip-path: circle(47% at 50% 50%);
-	/* width: 25px; */
 	aspect-ratio: 1 / 1;
 	outline: none;
 	background: dodgerblue;
@@ -213,7 +233,7 @@ div {
 	border: none;
 }
 
-#completedTitle {
+#listTitle {
 	width: 100%;
 	height: 50px;
 	display: flex;
@@ -222,6 +242,8 @@ div {
 	padding: 10px;
 	color: #fff;
 	background: #20B4E6;
+	position: sticky;
+	top: 0;
 }
 
 #closeCompleted {
@@ -305,5 +327,11 @@ div {
 	to {
 		visibility: hidden;
 		transform: translate3d(100%, 0, 0);
+	}
+}
+
+@media screen and (max-width: 601px) {
+	#tasks {
+		background-size: 40px;
 	}
 }
