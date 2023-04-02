@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1">
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 	<link rel="stylesheet" href="./assets/style.css">
@@ -14,7 +14,9 @@
 <body>
 	<div id="mainPanel">
 		<div class="title">
-			<img alt="logo" src="./assets/images/logo2.png">
+			<div class="material-symbols-outlined logo">
+				fact_check
+			</div>
 			To-Do App
 		</div>
 		<div id="mainContainer">
@@ -32,14 +34,8 @@
 
 			<div id="buttons_col">
 				<div class="backdrop">
-					<div id="tasks"></div>
-					<!-- <div id="downloadApp">
-						<img alt="download app" src="./assets/images/download.png">
-					</div> -->
+					<div id="tasks" class="material-symbols-outlined">format_list_bulleted_add</div>
 					<div id="buttonSpacer"></div>
-					<!-- <div id="info">
-						<img alt="creator info" src="./assets/images/info.png">
-					</div> -->
 					<div id="newItem"></div>
 				</div>
 			</div>

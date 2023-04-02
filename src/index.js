@@ -2,64 +2,36 @@ const log = console.log.bind(console);
 const $el = document.getElementById.bind(document);
 
 $el("newItem").addEventListener("click", () => {
+  if ($el("listUnDone").classList.contains("hidden")) {
+    $el("listUnDone").classList.toggle("hidden");
+    $el("listDone").classList.toggle("hidden");
+    $el("tasks").innerHTML = "format_list_bulleted_add";
+  }
+
   let listID = Date.now();
   let div = document.createElement("div");
   div.className = "toDoContainer";
   div.id = listID;
-  //div.innerHTML = `<div contenteditable="true" class="toDoItem">Tap to Edit</div><input type="checkbox" class="checkbox" data-listid=${listID}>`;
-  div.innerHTML = `<div class="toDoItem">Tap to Edit</div><input type="checkbox" class="checkbox" data-listid=${listID}>`;
-  div.classList.add("slideInLeft");
-
+  div.innerHTML = `<div class="material-symbols-outlined">drag_indicator</div>
+                    <textarea type="text" class="toDoItem" placeholder="Edit"></textarea>
+                    <input type="checkbox" class="checkbox" data-listid=${listID}>`;
   $el("listUnDone").append(div);
 
-  setTimeout(() => {
-    div.classList.remove("slideInLeft");
-  }, 500);
+  addListeners($el(listID));
 
-  enableDragSort(document.querySelectorAll(".listPanel > div"));
-
-  document.querySelectorAll(".checkbox").forEach((el, i) => {
+  document.querySelectorAll(".checkbox").forEach((el) => {
     el.addEventListener("click", (e) => {
-      let clone = $el(e.target.dataset.listid);
-      setTimeout(function () {
-        if (e.target.checked) {
-          clone.classList.remove("slideInLeft");
-          clone.classList.add("slideOutRight");
-
-          setTimeout(function () {
-            clone.remove();
-            clone.classList.remove("slideOutRight");
-            clone.classList.add("slideInLeft");
-            $el("listDone").append(clone);
-          }, 100);
-        } else {
-          clone.classList.remove("slideInLeft");
-          clone.classList.add("slideOutRight");
-
-          setTimeout(function () {
-            clone.remove();
-            clone.classList.remove("slideOutRight");
-
-            $el("listUnDone").append(clone);
-          }, 200);
-        }
-      }, 1000);
-    });
-  });
-
-  document.querySelectorAll(".toDoItem").forEach((el) => {
-    el.addEventListener("click", () => {
-      el.setAttribute("contenteditable", true);
-    });
-    el.addEventListener("focus", () => {
-      if (el.innerHTML == "Tap to Edit") {
-        el.innerHTML = "";
-      }
-    });
-    el.addEventListener("blur", () => {
-      el.setAttribute("contenteditable", false);
-      if (el.innerHTML == "") {
-        el.innerHTML = "Tap to Edit";
+      let item = $el(e.target.dataset.listid);
+      if (e.target.checked) {
+        setTimeout(() => {
+          item.remove();
+          $el("listDone").append(item);
+        }, 250);
+      } else {
+        setTimeout(() => {
+          item.remove();
+          $el("listUnDone").append(item);
+        }, 250);
       }
     });
   });
@@ -93,7 +65,11 @@ $el("tasks").addEventListener("click", (e) => {
     }
   });
 
-  e.target.classList.toggle("finishedTasks");
+  if (e.target.innerHTML == "data_check") {
+    e.target.innerHTML = "format_list_bulleted_add";
+  } else {
+    e.target.innerHTML = "data_check";
+  }
   $el("listUnDone").classList.toggle("hidden");
   $el("listDone").classList.toggle("hidden");
 });
@@ -104,76 +80,66 @@ $el("deleteListItems").addEventListener("click", (e) => {
   });
 });
 
-/*-----------------------------------*/
-
-function enableDragSort(list) {
-  // document.querySelectorAll(".listPanel").forEach((el) => {
-  //   el.addEventListener("contextMenu", (e) => {
-  //     e.preventDefault();
-  //   });
-  // });
-
-  if (list.length > 0) {
-    [...list].map((el) => {
-      addListeners(el);
-    });
-  }
-}
-
 function addListeners(el) {
   el.setAttribute("draggable", true);
+
   el.addEventListener("dragover", (e) => {
     e.preventDefault();
     if (e.target.draggable == true) {
-      e.target.classList.add("drag-sort-active");
+      e.target.classList.add("dropZone");
+    } else {
+      e.target.parentElement.classList.add("dropZone");
     }
+    e.dataTransfer.dropEffect = "move"; //   move has no icon? adding copy shows +
   });
   el.addEventListener("dragstart", (e) => {
-    e.dataTransfer.setData("text/plain", e.target.dataset.id);
+    e.dataTransfer.dropEffect = "move";
+    e.target.classList.add("dragTarget");
+    e.dataTransfer.setData("text/plain", e.target.id);
   });
   el.addEventListener("dragleave", (e) => {
-    e.target.classList.remove("drag-sort-active");
-  });
-  el.addEventListener("dragend", (e) => {
-    e.target.classList.remove("drag-sort-active");
+    el.classList.remove("dragTarget");
+    e.target.classList.remove("dropZone");
   });
   el.addEventListener("drop", (e) => {
-    e.target.classList.remove("drag-sort-active");
-    handleDrop(e);
+    e.preventDefault();
+
+    let parentTarget = el.parentNode;
+    let dropTarget = el;
+    let dragTarget = $el(e.dataTransfer.getData("text/plain"));
+
+    handleDrop(e, dropTarget, dragTarget, parentTarget);
+
+    el.classList.remove("dropZone");
+    e.target.classList.remove("dropZone");
   });
 }
 
-function enableDragItem(item) {
-  item.setAttribute("draggable", true);
-  item.addEventListener("drag", (e) => {
-    handleDrag(e);
+function handleDrop(e, dropTarget, dragTarget, parentTarget) {
+  let dragTargetIndex;
+  let dropTargetIndex;
+  let dragDirUp;
+
+  [...document.querySelectorAll(".toDoContainer")].map((el, i) => {
+    if (el == dragTarget) {
+      dragTargetIndex = i;
+    }
   });
-  item.addEventListener("dragend", (e) => {
-    handleDrop(e);
+
+  [...document.querySelectorAll(".toDoContainer")].map((el, i) => {
+    if (el == dropTarget) {
+      dropTargetIndex = i;
+    }
   });
-}
 
-function handleDrag(e) {
-  const selectedItem = e.target,
-    list = selectedItem.parentNode,
-    x = e.clientX,
-    y = e.clientY;
+  dragDirUp = dragTargetIndex > dropTargetIndex;
 
-  selectedItem.classList.add("drag-sort-active");
-  let swapItem =
-    document.elementFromPoint(x, y) === null
-      ? selectedItem
-      : document.elementFromPoint(x, y);
-
-  if (list === swapItem.parentNode) {
-    swapItem =
-      swapItem !== selectedItem.nextSibling ? swapItem : swapItem.nextSibling;
-    list.insertBefore(selectedItem, swapItem);
+  if (dragDirUp) {
+    parentTarget.insertBefore(dragTarget, dropTarget);
+  } else {
+    parentTarget.insertBefore(
+      dragTarget,
+      parentTarget.children.item(dropTargetIndex + 1)
+    );
   }
 }
-
-function handleDrop(e) {
-  e.target.classList.remove("drag-sort-active");
-}
-
-enableDragSort(document.querySelectorAll(".listPanel > div"));

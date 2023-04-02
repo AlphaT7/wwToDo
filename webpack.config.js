@@ -1,13 +1,12 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
-// const WorkboxPlugin = require("workbox-webpack-plugin");
 
 module.exports = {
   watch: false,
   entry: "./src/index.js",
-  mode: "development",
-  // mode: "production",
+  // mode: "development",
+  mode: "production",
   devtool: "inline-source-map",
   target: "web",
   stats: {
@@ -56,26 +55,6 @@ module.exports = {
         },
       ],
     }),
-    // new WorkboxPlugin.GenerateSW({
-    //   // these options encourage the ServiceWorkers to get in there fast
-    //   // and not allow any straggling "old" SWs to hang around
-    //   clientsClaim: true,
-    //   skipWaiting: true,
-    //   exclude: [/audio/, /modules/],
-    //   maximumFileSizeToCacheInBytes: 50000000,
-    //   runtimeCaching: [
-    //     {
-    //       urlPattern: ({ url }) =>
-    //         url.origin === "https://dadsdinners.web.app/",
-    //       //urlPattern: ({ url }) => url.origin === "http://localhost:3000/",
-    //       handler: "NetworkFirst",
-    //       options: {
-    //         cacheName: "WW-AppCache",
-    //         networkTimeoutSeconds: 4,
-    //       },
-    //     },
-    //   ],
-    // }),
   ],
   module: {
     rules: [

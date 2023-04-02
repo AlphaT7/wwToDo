@@ -8,25 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AlphaT7/cmToDo.git"
+    "url": "git+https://github.com/AlphaT7/wwToDo.git"
   },
   "author": "Jamison C. Winters",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AlphaT7/cmToDo.git/issues"
+    "url": "https://github.com/AlphaT7/wwToDo.git/issues"
   },
-  "homepage": "https://github.com/AlphaT7/cmToDo.git#readme",
+  "homepage": "https://github.com/AlphaT7/wwToDo.git#readme",
   "devDependencies": {
     "html-webpack-plugin": "^5.5.0",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.1",
-    "workbox-webpack-plugin": "^6.5.4"
+    "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
     "copy-webpack-plugin": "^11.0.0",
-    "firebase": "^9.17.1",
-    "idb-keyval": "^6.2.0",
-    "intro.js": "^6.0.0"
+    "firebase": "^9.17.1"
   }
 }
